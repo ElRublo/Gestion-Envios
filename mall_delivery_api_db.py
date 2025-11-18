@@ -21,7 +21,6 @@ def create_db_and_tables():
     """Crea las tablas en la base de datos si no existen."""
     SQLModel.metadata.create_all(engine)
 
-# Dependencia para obtener la sesión de la base de datos
 def get_session():
     """Función generadora para las dependencias de FastAPI."""
     with Session(engine) as session:
