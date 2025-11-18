@@ -1,0 +1,1 @@
+web: uvicorn mall_delivery_api_db:app --host 0.0.0.0 --port $PORT
