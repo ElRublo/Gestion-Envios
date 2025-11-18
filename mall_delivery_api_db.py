@@ -6,9 +6,15 @@ from typing import List, Dict, Any, Optional
 from sqlmodel import SQLModel, Field as SQLField, Session, create_engine, select
 from sqlalchemy import Column
 from sqlalchemy.types import JSON
+import os
 
 # --- Configuración de la Base de Datos ---
-DATABASE_URL = "mysql+pymysql://root:elnayhtWqjOOcsZwmOPoRRPdbylFqRzx@interchange.proxy.rlwy.net:29531/railway"
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("La variable de entorno DATABASE_URL no está configurada.")
+
+if DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
 
 engine = create_engine(
     DATABASE_URL, 
