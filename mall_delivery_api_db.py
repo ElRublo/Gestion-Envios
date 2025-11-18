@@ -8,7 +8,7 @@ from sqlalchemy import Column
 from sqlalchemy.types import JSON
 
 # --- Configuración de la Base de Datos ---
-DATABASE_URL = "mysql+pymysql://root:Rubloford22!@localhost:3306/envios"
+DATABASE_URL = "mysql://root:elnayhtWqjOOcsZwmOPoRRPdbylFqRzx@mysql.railway.internal:3306/railway"
 
 engine = create_engine(
     DATABASE_URL, 
