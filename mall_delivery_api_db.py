@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends
+import httpx
 from pydantic import Field
 from datetime import datetime
 import uuid
@@ -144,6 +145,7 @@ async def crear_orden_envio(orden_entrante: OrdenEntrante, session: Session = De
         id_orden_externa=orden_entrante.id_orden_externa,
         id_orden_original=orden_entrante.id_orden_original,
         servicio_origen=orden_entrante.servicio_origen,
+        webhook_url=orden_entrante.webhook_url,
         datos_cliente_json=orden_entrante.datos_cliente.model_dump(),
         productos_json=[p.model_dump() for p in orden_entrante.productos],
         ubicacion_actual=f"Solicitud recibida de {orden_entrante.servicio_origen}",
@@ -207,6 +209,24 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
     session.add(order)
     session.commit()
     session.refresh(order)
+
+    # 4. Notificar vía webhook si está configurado
+    if order.webhook_url:
+        notification_payload = {
+            "codigo_seguimiento": order.codigo_seguimiento,
+            "id_orden_externa": order.id_orden_externa,
+            "estado_actual": order.estado_actual,
+            "ubicacion_actual": order.ubicacion_actual,
+            "fecha_actualizacion": order.fecha_actualizacion.isoformat(),
+        }
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.post(order.webhook_url, json=notification_payload)
+                # Opcional: Registrar si la notificación falló.
+                if response.status_code >= 400:
+                    print(f"ERROR: Webhook a {order.webhook_url} falló con estado {response.status_code}")
+        except httpx.RequestError as e:
+            print(f"ERROR: No se pudo conectar al Webhook {order.webhook_url}. Error: {e}")
 
     return crear_respuesta_estado_from_orden(order)
 
