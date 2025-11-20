@@ -54,6 +54,7 @@ class Orden(SQLModel, table=True):
     id_orden_externa: str = SQLField(index=True)
     id_orden_original: str
     servicio_origen: str
+    webhook_url: Optional[str] = SQLField(default=None)
     
     datos_cliente_json: Dict[str, Any] = SQLField(sa_column=Column(JSON))
     productos_json: List[Dict[str, Any]] = SQLField(sa_column=Column(JSON))
@@ -71,6 +72,7 @@ class OrdenEntrante(SQLModel):
     id_orden_externa: str = Field(..., description="ID único de la orden.")
     id_orden_original: str = Field(..., description="ID de la orden original.")
     servicio_origen: str = Field(..., description="Nombre del negocio.")
+    webhook_url: Optional[str] = Field(None, description="URL para notificaciones.")
     datos_cliente: DatosClienteEntrante
     productos: List[ProductoEntrante] = Field(..., min_items=1)
 

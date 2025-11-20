@@ -5,3 +5,4 @@ mysqlclient
 pydantic
 sqlalchemy
 pymysql
+httpx
