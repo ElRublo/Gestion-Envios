@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 import httpx
+import json
 from pydantic import Field
 from datetime import datetime
 import uuid
@@ -57,8 +58,8 @@ class Orden(SQLModel, table=True):
     servicio_origen: str
     webhook_url: Optional[str] = SQLField(default=None)
     
-    datos_cliente_json: Dict[str, Any] = SQLField(sa_column=Column(JSON))
-    productos_json: List[Dict[str, Any]] = SQLField(sa_column=Column(JSON))
+    datos_cliente_json: str
+    productos_json: str
     
     # Campos de Estado y Seguimiento
     estado_interno: str = "RECIBIDA"
@@ -146,8 +147,8 @@ async def crear_orden_envio(orden_entrante: OrdenEntrante, session: Session = De
         id_orden_original=orden_entrante.id_orden_original,
         servicio_origen=orden_entrante.servicio_origen,
         webhook_url=orden_entrante.webhook_url,
-        datos_cliente_json=orden_entrante.datos_cliente.model_dump(),
-        productos_json=[p.model_dump() for p in orden_entrante.productos],
+        datos_cliente_json=json.dumps(orden_entrante.datos_cliente.model_dump()),
+        productos_json=json.dumps([p.model_dump() for p in orden_entrante.productos]),
         ubicacion_actual=f"Solicitud recibida de {orden_entrante.servicio_origen}",
     )
     # codigo_seguimiento, fecha_creacion, etc. se generan por defecto
