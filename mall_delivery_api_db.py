@@ -243,14 +243,15 @@ async def obtener_cierre_diario(session: Session = Depends(get_session)):
             "id_orden_externa": data.id_orden_externa,
             "codigo_seguimiento": data.codigo_seguimiento,
             "servicio_origen": data.servicio_origen,
-            "cliente": f"{data.datos_cliente_json.get('nombre')} ({data.datos_cliente_json.get('direccion')})",
-            "productos_count": len(data.productos_json),
+            
+            "cliente": f"{json.loads(data.datos_cliente_json).get('nombre')} ({json.loads(data.datos_cliente_json).get('direccion')})",
+            "productos_count": len(json.loads(data.productos_json)),
+            
             "entregado_a_tiempo": "Sí (Simulado)",
             "estado": data.estado_actual
         }
         for data in entregas
     ]
-
     return {
         "fecha_reporte": datetime.now().strftime("%Y-%m-%d"),
         "total_entregas_para_cierre": len(entregas_del_dia),
