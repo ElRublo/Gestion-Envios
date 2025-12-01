@@ -8,7 +8,21 @@ from typing import List, Dict, Any, Optional
 from sqlmodel import SQLModel, Field as SQLField, Session, create_engine, select
 from sqlalchemy import Column
 from sqlalchemy.types import JSON
+from fastapi.middleware.cors import CORSMiddleware
 import os
+
+app = FastAPI(
+    title="API de Gestión de Envíos del Mall (DB Integrada)",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Configuración de la Base de Datos ---
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -97,13 +111,6 @@ STATUS_MAP = {
     "EN_CAMINO": "El producto fue enviado y está en camino",
     "ENTREGADO": "El producto fue entregado al cliente",
 }
-
-# --- Configuración de la Aplicación FastAPI ---
-
-app = FastAPI(
-    title="API de Gestión de Envíos del Mall (DB Integrada)",
-    version="1.0.0"
-)
 
 # Ejecuta esta función al iniciar la aplicación
 @app.on_event("startup")
