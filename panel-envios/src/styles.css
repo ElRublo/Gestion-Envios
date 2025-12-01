@@ -1,0 +1,151 @@
+body {
+  margin: 0;
+  background: #eef2f6;
+  font-family: "Segoe UI", sans-serif;
+  color: #1a1a1a;
+}
+
+.layout {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  background: linear-gradient(135deg, #004aad, #0077ff);
+  color: white;
+  padding: 30px;
+  border-radius: 18px;
+  margin-bottom: 30px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.header p {
+  margin-top: 5px;
+  font-size: 17px;
+  opacity: 0.95;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  margin-bottom: 22px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.info-card {
+  border-left: 6px solid #0077ff;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-top: 12px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #c9c9c9;
+  margin-top: 6px;
+  font-size: 15px;
+  background: #fafafa;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 4px rgba(0,119,255,0.4);
+}
+
+button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  background: #004aad;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #003680;
+}
+
+.btn-success {
+  background: #00a82d;
+}
+
+.btn-success:hover {
+  background: #008f26;
+}
+
+.msg {
+  padding: 14px;
+  background: #fff3c4;
+  border-left: 6px solid #ffb400;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.tabla thead {
+  background: #004aad;
+  color: white;
+}
+
+.tabla th,
+.tabla td {
+  padding: 12px 10px;
+  text-align: left;
+}
+
+.tabla tbody tr {
+  background: white;
+  transition: 0.15s;
+}
+
+.tabla tbody tr:nth-child(even) {
+  background: #f3f6fa;
+}
+
+.tabla tbody tr:hover {
+  background: #e1edff;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import "./styles.css";
 
 const API_URL = "https://gestion-envios-sz3x.onrender.com";
 
@@ -10,13 +11,9 @@ export default function App() {
   const [ubicacion, setUbicacion] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
+  const [ordenes, setOrdenes] = useState([]);
 
-  const estadosDisponibles = [
-    "RECIBIDA",
-    "FECHA_SET",
-    "EN_CAMINO",
-    "ENTREGADO",
-  ];
+  const estadosDisponibles = ["RECIBIDA", "FECHA_SET", "EN_CAMINO", "ENTREGADO"];
 
   const buscarOrden = async () => {
     if (!trackingCode) return;
@@ -42,7 +39,6 @@ export default function App() {
     setLoading(false);
   };
 
-
   const actualizarEstado = async () => {
     if (!estado || !ubicacion) {
       setMsg("⚠️ Estado y ubicación son obligatorios.");
@@ -61,9 +57,27 @@ export default function App() {
     }
   };
 
+  const cargarOrdenes = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/interna/ordenes`);
+      setOrdenes(res.data);
+    } catch (err) {
+      console.error(err);
+      setMsg("⚠️ No se pudieron cargar las órdenes.");
+    }
+  };
+
+  useEffect(() => {
+    cargarOrdenes();
+  }, []);
+
   return (
-    <div className="container">
-      <h2>🟦 Panel Interno de Envíos</h2>
+    <div className="layout">
+
+      <header className="header">
+        <h1>🚀 Planet Express</h1>
+        <p>Panel Interno de Envíos</p>
+      </header>
 
       <div className="card">
         <label>Código de seguimiento:</label>
@@ -75,13 +89,41 @@ export default function App() {
         <button onClick={buscarOrden}>Buscar orden</button>
       </div>
 
-      {loading && <p>Cargando...</p>}
-      {msg && <p>{msg}</p>}
+      {ordenes.length > 0 && !order && (
+        <div className="card">
+          <h3>📋 Todas las Órdenes</h3>
+          <table className="tabla">
+            <thead>
+              <tr>
+                <th>ID Externa</th>
+                <th>Código</th>
+                <th>Estado</th>
+                <th>Ubicación</th>
+                <th>Actualización</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ordenes.map((o) => (
+                <tr key={o.codigo_seguimiento}>
+                  <td>{o.id_orden_externa}</td>
+                  <td>{o.codigo_seguimiento}</td>
+                  <td>{o.estado_actual}</td>
+                  <td>{o.ubicacion_actual}</td>
+                  <td>{new Date(o.fecha_actualizacion).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+
+      {loading && <p className="loading">Cargando...</p>}
+      {msg && <p className="msg">{msg}</p>}
 
       {order && (
         <>
-          {/* Información de la orden */}
-          <div className="card info">
+          <div className="card info-card">
             <h3>📦 Información de la Orden</h3>
             <p><b>ID Externa:</b> {order.id_orden_externa}</p>
             <p><b>Código:</b> {order.codigo_seguimiento}</p>
@@ -90,7 +132,6 @@ export default function App() {
             <p><b>Actualizado:</b> {new Date(order.fecha_actualizacion).toLocaleString()}</p>
           </div>
 
-          {/* Actualizar */}
           <div className="card">
             <h3>🔧 Actualizar Estado</h3>
 

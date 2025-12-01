@@ -264,3 +264,22 @@ async def obtener_cierre_diario(session: Session = Depends(get_session)):
         "total_entregas_para_cierre": len(entregas_del_dia),
         "entregas": entregas_del_dia
     }
+
+@app.get("/interna/ordenes", tags=["Interno / Operaciones"])
+async def obtener_todas_ordenes(session: Session = Depends(get_session)):
+    """Devuelve TODAS las órdenes registradas en la base de datos."""
+    
+    statement = select(Orden).order_by(Orden.fecha_creacion.desc())
+    ordenes = session.exec(statement).all()
+
+    return [
+        {
+            "id_orden_externa": o.id_orden_externa,
+            "codigo_seguimiento": o.codigo_seguimiento,
+            "estado_actual": o.estado_actual,
+            "ubicacion_actual": o.ubicacion_actual,
+            "fecha_actualizacion": o.fecha_actualizacion,
+            "servicio_origen": o.servicio_origen,
+        }
+        for o in ordenes
+    ]
