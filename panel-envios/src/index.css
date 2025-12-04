@@ -1,4 +1,3 @@
-/* ===== RESET ===== */
 *,
 *::before,
 *::after {
@@ -6,9 +5,9 @@
 }
 
 :root {
-  --bg-main: #eef2f7; /* fondo general claro */
-  --bg-sidebar: #020617; /* sidebar oscuro */
-  --card-bg: #ffffff; /* tarjetas blancas */
+  --bg-main: #eef2f7;
+  --bg-sidebar: #020617;
+  --card-bg: #ffffff;
   --primary: #2563eb;
   --primary-soft: #1d4ed8;
   --accent: #38bdf8;
@@ -19,7 +18,6 @@
   --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
 }
 
-/* ===== BODY ===== */
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
@@ -31,13 +29,11 @@ body {
   min-height: 100vh;
 }
 
-/* ===== LAYOUT GENERAL ===== */
 .app-shell {
   display: flex;
   min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
   width: 220px;
   background: var(--bg-sidebar);
@@ -97,14 +93,12 @@ body {
   padding-top: 20px;
 }
 
-/* ===== MAIN AREA ===== */
 .main-area {
   flex: 1;
   padding: 22px 24px 40px;
   background: var(--bg-main);
 }
 
-/* ===== CARDS ===== */
 .card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -114,7 +108,6 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
-/* Header principal */
 .card-header-main {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -136,7 +129,6 @@ body {
   color: var(--text-muted);
 }
 
-/* Botón pequeño header */
 .btn-small {
   margin-top: 12px;
   padding: 6px 12px;
@@ -152,7 +144,6 @@ body {
   background: #d1d5db;
 }
 
-/* ===== TITULOS DE SECCIÓN ===== */
 .card-section-header {
   display: flex;
   align-items: center;
@@ -178,12 +169,10 @@ body {
   justify-content: center;
 }
 
-/* ===== BUSCAR ORDEN ===== */
 .card-search {
   background: var(--card-bg);
 }
 
-/* ===== LAYOUT BUSCADOR ===== */
 .search-row {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) auto;
@@ -197,7 +186,6 @@ body {
   }
 }
 
-/* ===== INPUTS / SELECTS ===== */
 label {
   font-size: 12px;
   color: var(--text-muted);
@@ -229,7 +217,6 @@ select:focus {
   background: #ffffff;
 }
 
-/* ===== BOTONES ===== */
 button,
 .btn-primary {
   padding: 10px 16px;
@@ -262,7 +249,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ===== MENSAJE ===== */
 .msg {
   margin-top: 10px;
   padding: 10px;
@@ -273,7 +259,6 @@ button:disabled {
   font-size: 13px;
 }
 
-/* ===== INFO DE ORDEN ===== */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -293,7 +278,6 @@ button:disabled {
   font-size: 13px;
 }
 
-/* ===== UPDATE GRID ===== */
 .update-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -301,7 +285,6 @@ button:disabled {
   margin-top: 10px;
 }
 
-/* ===== PILLS ===== */
 .pill {
   padding: 4px 12px;
   border-radius: 999px;
@@ -330,7 +313,6 @@ button:disabled {
   color: #166534;
 }
 
-/* ===== TABLA ===== */
 .table-wrapper {
   margin-top: 8px;
   border-radius: 12px;
@@ -364,7 +346,6 @@ button:disabled {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* filas alternadas claras */
 .tabla tbody tr:nth-child(odd) {
   background: #f9fafb;
 }
@@ -378,7 +359,6 @@ button:disabled {
   cursor: pointer;
 }
 
-/* ===== TEXTO PLACEHOLDER OTRAS VISTAS ===== */
 .placeholder-text {
   font-size: 14px;
   color: var(--text-muted);

@@ -1,5 +1,10 @@
 // src/assets/CafeteriaView.jsx
 export default function CafeteriaView({ ordenes }) {
+  
+  const ordenesCafeteria = ordenes.filter(o =>
+    o.webhook_url?.includes("cafeteria")
+  );
+
   return (
     <>
       <section className="card">
@@ -11,17 +16,16 @@ export default function CafeteriaView({ ordenes }) {
         </div>
 
         <p className="placeholder-text">
-          Aquí puedes mostrar solo órdenes relacionadas con Cafetería, métricas,
-          ventas del día, etc.
+          Órdenes registradas desde el sistema de Cafetería.
         </p>
       </section>
 
-      {ordenes.length > 0 && (
+      {ordenesCafeteria.length > 0 && (
         <section className="card">
           <div className="card-section-header">
             <div className="card-section-title">
               <span className="card-section-icon">📋</span>
-              Órdenes (vista Cafetería)
+              Órdenes Cafetería
             </div>
           </div>
 
@@ -36,7 +40,7 @@ export default function CafeteriaView({ ordenes }) {
                 </tr>
               </thead>
               <tbody>
-                {ordenes.map((o) => (
+                {ordenesCafeteria.map((o) => (
                   <tr key={o.codigo_seguimiento}>
                     <td>{o.id_orden_externa}</td>
                     <td>{o.codigo_seguimiento}</td>

@@ -1,5 +1,10 @@
 // src/assets/VandentialsView.jsx
 export default function VandentialsView({ ordenes }) {
+  
+  const ordenesVandentials = ordenes.filter(o =>
+    o.webhook_url?.includes("vandentials")
+  );
+  
   return (
     <>
       <section className="card">
@@ -11,17 +16,16 @@ export default function VandentialsView({ ordenes }) {
         </div>
 
         <p className="placeholder-text">
-          Aquí puedes mostrar KPIs, métricas y órdenes específicas de
-          Vandentials.
+          Órdenes recibidas desde Vandentials.
         </p>
       </section>
 
-      {ordenes.length > 0 && (
+      {ordenesVandentials.length > 0 && (
         <section className="card">
           <div className="card-section-header">
             <div className="card-section-title">
               <span className="card-section-icon">📋</span>
-              Órdenes (vista Vandentials)
+              Órdenes Vandentials
             </div>
           </div>
 
@@ -36,7 +40,7 @@ export default function VandentialsView({ ordenes }) {
                 </tr>
               </thead>
               <tbody>
-                {ordenes.map((o) => (
+                {ordenesVandentials .map((o) => (
                   <tr key={o.codigo_seguimiento}>
                     <td>{o.id_orden_externa}</td>
                     <td>{o.codigo_seguimiento}</td>

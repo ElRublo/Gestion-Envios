@@ -280,6 +280,7 @@ async def obtener_todas_ordenes(session: Session = Depends(get_session)):
             "ubicacion_actual": o.ubicacion_actual,
             "fecha_actualizacion": o.fecha_actualizacion,
             "servicio_origen": o.servicio_origen,
+            "webhook_url": o.webhook_url,
         }
         for o in ordenes
     ]
