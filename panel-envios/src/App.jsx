@@ -145,7 +145,7 @@ export default function App() {
         {vistaActual === "core" && (
           <section className="card card-header-main header-core">
             <div className="header-core-left">
-              <h1>SGE | SISTEMA DE GESTIÓN DE ENVÍOS (CORE)</h1>
+              <h1>PLANET EXPRESS</h1>
               <p className="header-description">
                 Panel de Búsqueda y Administración de Órdenes (VISTA PRINCIPAL)
               </p>
@@ -180,7 +180,7 @@ export default function App() {
               className="btn-small back-btn"
               onClick={() => setVistaActual("core")}
             >
-              ⬅ Volver a SGE Core
+              ⬅ Volver a PLANET EXPRESS
             </button>
           </section>
         )}
@@ -199,7 +199,7 @@ export default function App() {
               className="btn-small back-btn"
               onClick={() => setVistaActual("core")}
             >
-              ⬅ Volver a SGE Core
+              ⬅ Volver a PLANET EXPRESS
             </button>
           </section>
         )}
