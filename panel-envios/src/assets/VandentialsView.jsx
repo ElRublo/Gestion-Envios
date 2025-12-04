@@ -1,10 +1,9 @@
-// src/assets/VandentialsView.jsx
 export default function VandentialsView({ ordenes }) {
-  
+
   const ordenesVandentials = ordenes.filter(o =>
-    o.webhook_url?.includes("vandentials")
+    o.webhook_url?.includes("e-commerce-test-mm6o")
   );
-  
+
   return (
     <>
       <section className="card">
@@ -20,7 +19,7 @@ export default function VandentialsView({ ordenes }) {
         </p>
       </section>
 
-      {ordenesVandentials.length > 0 && (
+      {ordenesVandentials.length > 0 ? (
         <section className="card">
           <div className="card-section-header">
             <div className="card-section-title">
@@ -40,7 +39,7 @@ export default function VandentialsView({ ordenes }) {
                 </tr>
               </thead>
               <tbody>
-                {ordenesVandentials .map((o) => (
+                {ordenesVandentials.map((o) => (
                   <tr key={o.codigo_seguimiento}>
                     <td>{o.id_orden_externa}</td>
                     <td>{o.codigo_seguimiento}</td>
@@ -52,6 +51,8 @@ export default function VandentialsView({ ordenes }) {
             </table>
           </div>
         </section>
+      ) : (
+        <p className="placeholder-text">No hay órdenes de Vandentials.</p>
       )}
     </>
   );

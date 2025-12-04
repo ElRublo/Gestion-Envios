@@ -1,8 +1,7 @@
-// src/assets/CafeteriaView.jsx
 export default function CafeteriaView({ ordenes }) {
-  
+
   const ordenesCafeteria = ordenes.filter(o =>
-    o.webhook_url?.includes("cafeteria")
+    o.webhook_url?.includes("stardust-api")
   );
 
   return (
@@ -16,11 +15,11 @@ export default function CafeteriaView({ ordenes }) {
         </div>
 
         <p className="placeholder-text">
-          Órdenes registradas desde el sistema de Cafetería.
+          Órdenes recibidas desde el sistema de Cafetería.
         </p>
       </section>
 
-      {ordenesCafeteria.length > 0 && (
+      {ordenesCafeteria.length > 0 ? (
         <section className="card">
           <div className="card-section-header">
             <div className="card-section-title">
@@ -52,6 +51,8 @@ export default function CafeteriaView({ ordenes }) {
             </table>
           </div>
         </section>
+      ) : (
+        <p className="placeholder-text">No hay órdenes de Cafetería.</p>
       )}
     </>
   );
