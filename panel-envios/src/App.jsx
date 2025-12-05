@@ -48,7 +48,9 @@ export default function App() {
     setMsg("");
 
     try {
-      const res = await axios.get(`${API_URL}/ordenes/${trackingCode}`);
+      const res = await axios.get(
+        `${API_URL}/interna/ordenes-completa/${trackingCode}`
+      );
       setOrder(res.data);
     } catch (err) {
       if (err.response?.status === 404) {
@@ -61,6 +63,7 @@ export default function App() {
       setLoading(false);
     }
   };
+
 
   const actualizarEstado = async () => {
     if (!estado || !ubicacion) {
@@ -112,7 +115,7 @@ export default function App() {
             }}
           >
             <span className="sidebar-icon">🧩</span>
-            SGE Core
+            Planet Express
           </button>
 
           <button
@@ -136,7 +139,7 @@ export default function App() {
           </button>
         </div>
 
-        <div className="sidebar-footer">© 2025 SGE Panel</div>
+        <div className="sidebar-footer">© 2025 Planet Express Panel</div>
       </aside>
 
       {/* ===== CONTENIDO ===== */}
@@ -261,6 +264,22 @@ export default function App() {
                       <p className="info-value">{order.codigo_seguimiento}</p>
                     </div>
                     <div>
+                      <span className="info-label">Nombre</span>
+                      <p className="info-value">{order?.cliente?.nombre || "No disponible"}</p>
+                    </div>
+                    <div>
+                      <span className="info-label">Dirección</span>
+                      <p className="info-value">{order?.cliente?.direccion || "No disponible"}</p>
+                    </div>
+                    <div>
+                      <span className="info-label">Teléfono</span>
+                      <p className="info-value">{order?.cliente?.telefono || "No disponible"}</p>
+                    </div>
+                    <div>
+                      <span className="info-label">Email</span>
+                      <p className="info-value">{order?.cliente?.email || "No disponible"}</p>
+                    </div>
+                    <div>
                       <span className="info-label">Estado</span>
                       <p className="info-value">
                         <span className={getEstadoClass(order.estado_actual)}>
@@ -279,6 +298,43 @@ export default function App() {
                       </p>
                     </div>
                   </div>
+                </section>
+
+                {/* ===== PRODUCTOS COMPRADOS ===== */}
+                <section className="card card-table">
+                  <div className="card-section-header">
+                    <div className="card-section-title">
+                      <span className="card-section-icon">🛒</span>
+                      Productos del Pedido
+                    </div>
+                  </div>
+
+                  {order.productos && order.productos.length > 0 ? (
+                    <div className="table-wrapper">
+                      <table className="tabla">
+                        <thead>
+                          <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {order.productos.map((p, i) => (
+                            <tr key={i}>
+                              <td>{p.nombre}</td>
+                              <td>{p.cantidad}</td>
+                              <td>${p.precio_unitario}</td>
+                              <td>${p.cantidad * p.precio_unitario}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="msg">⚠️ Esta orden no tiene productos registrados.</p>
+                  )}
                 </section>
 
                 <section className="card">
@@ -338,8 +394,10 @@ export default function App() {
                       <tr>
                         <th>ID Externa</th>
                         <th>Código</th>
+                        <th>Servicio Origen</th>
                         <th>Estado</th>
                         <th>Ubicación</th>
+                        
                         <th>Actualización</th>
                       </tr>
                     </thead>
@@ -347,9 +405,16 @@ export default function App() {
                       {ordenes.map((o) => (
                         <tr
                           key={o.codigo_seguimiento}
-                          onClick={() => {
-                            setOrder(o);
-                            setTrackingCode(o.codigo_seguimiento);
+                          onClick={async () => {
+                            try {
+                              const res = await axios.get(
+                                `${API_URL}/interna/ordenes-completa/${o.codigo_seguimiento}`
+                              );
+                              setOrder(res.data);
+                              setTrackingCode(o.codigo_seguimiento);
+                            } catch (err) {
+                              console.error("Error al cargar orden completa:", err);
+                            }
                           }}
                         >
                           <td>{o.id_orden_externa}</td>

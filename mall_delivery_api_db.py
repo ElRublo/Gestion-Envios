@@ -100,6 +100,17 @@ class EstadoEnvio(SQLModel):
     ubicacion_actual: str
     fecha_actualizacion: datetime
 
+class OrdenCompleta(SQLModel):
+    id_orden_externa: str
+    codigo_seguimiento: str
+    estado_actual: str
+    ubicacion_actual: str
+    fecha_actualizacion: datetime
+    servicio_origen: str
+    cliente: Dict[str, Any]
+    productos: List[Dict[str, Any]]
+
+
 class ActualizacionEstado(SQLModel):
     estado: str = Field(..., description="Nuevo estado de la orden.")
     ubicacion: str = Field(..., description="Nueva ubicación o detalle del estado.")
@@ -130,6 +141,27 @@ def crear_respuesta_estado_from_orden(orden: Orden) -> EstadoEnvio:
     )
 
 # --- Endpoints de la API (Con Conexión a BD) ---
+
+@app.get("/interna/ordenes-completa/{tracking_code}", response_model=OrdenCompleta)
+async def obtener_orden_completa(tracking_code: str, session: Session = Depends(get_session)):
+    
+    statement = select(Orden).where(Orden.codigo_seguimiento == tracking_code)
+    order = session.exec(statement).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Orden no encontrada")
+
+    return {
+        "id_orden_externa": order.id_orden_externa,
+        "codigo_seguimiento": order.codigo_seguimiento,
+        "estado_actual": order.estado_actual,
+        "ubicacion_actual": order.ubicacion_actual,
+        "fecha_actualizacion": order.fecha_actualizacion,
+        "servicio_origen": order.servicio_origen,
+        "cliente": json.loads(order.datos_cliente_json),
+        "productos": json.loads(order.productos_json),
+    }
+
 
 @app.post("/ordenes", response_model=EstadoEnvio, status_code=201, tags=["Negocios / Creación"])
 async def crear_orden_envio(orden_entrante: OrdenEntrante, session: Session = Depends(get_session)):
