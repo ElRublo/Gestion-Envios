@@ -14,8 +14,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [ordenes, setOrdenes] = useState([]);
-
-  // core | vandentials | cafeteria
   const [vistaActual, setVistaActual] = useState("core");
 
   const estadosDisponibles = [
@@ -100,10 +98,8 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {/* ===== SIDEBAR ===== */}
       <aside className="sidebar">
         <div className="sidebar-title">MÓDULOS</div>
-
         <div className="sidebar-buttons">
           <button
             className={`sidebar-btn ${vistaActual === "core" ? "active" : ""}`}
@@ -117,7 +113,6 @@ export default function App() {
             <span className="sidebar-icon">🧩</span>
             Planet Express
           </button>
-
           <button
             className={`sidebar-btn ${
               vistaActual === "vandentials" ? "active" : ""
@@ -127,7 +122,6 @@ export default function App() {
             <span className="sidebar-icon">📦</span>
             Vandentials
           </button>
-
           <button
             className={`sidebar-btn ${
               vistaActual === "cafeteria" ? "active" : ""
@@ -138,13 +132,9 @@ export default function App() {
             Cafetería
           </button>
         </div>
-
         <div className="sidebar-footer">© 2025 Planet Express Panel</div>
       </aside>
-
-      {/* ===== CONTENIDO ===== */}
       <div className="main-area">
-        {/* ===== HEADER PRINCIPAL SGE CORE ===== */}
         {vistaActual === "core" && (
           <section className="card card-header-main header-core">
             <div className="header-core-left">
@@ -153,7 +143,6 @@ export default function App() {
                 Panel de Búsqueda y Administración de Órdenes (VISTA PRINCIPAL)
               </p>
             </div>
-
             {order && (
               <button
                 className="btn-small back-btn"
@@ -168,8 +157,6 @@ export default function App() {
             )}
           </section>
         )}
-
-        {/* ===== HEADER VANDENTIALS ===== */}
         {vistaActual === "vandentials" && (
           <section className="card card-header-main header-core">
             <div className="header-core-left">
@@ -178,7 +165,6 @@ export default function App() {
                 Gestión y resumen de órdenes para el cliente Vandentials.
               </p>
             </div>
-
             <button
               className="btn-small back-btn"
               onClick={() => setVistaActual("core")}
@@ -187,8 +173,6 @@ export default function App() {
             </button>
           </section>
         )}
-
-        {/* ===== HEADER CAFETERÍA ===== */}
         {vistaActual === "cafeteria" && (
           <section className="card card-header-main header-core">
             <div className="header-core-left">
@@ -197,7 +181,6 @@ export default function App() {
                 Vista especializada para órdenes ligadas a Cafetería.
               </p>
             </div>
-
             <button
               className="btn-small back-btn"
               onClick={() => setVistaActual("core")}
@@ -206,11 +189,8 @@ export default function App() {
             </button>
           </section>
         )}
-
-        {/* ===== CONTENIDO CORE ===== */}
         {vistaActual === "core" && (
           <>
-            {/* BUSCADOR */}
             <section className="card card-search">
               <div className="card-section-header">
                 <div className="card-section-title">
@@ -218,7 +198,6 @@ export default function App() {
                   Buscar Orden
                 </div>
               </div>
-
               <div className="search-row">
                 <div>
                   <label>ID o BPV (Código de seguimiento)</label>
@@ -230,7 +209,6 @@ export default function App() {
                     placeholder="Ej: 8F3A7"
                   />
                 </div>
-
                 <button
                   className="btn-primary"
                   onClick={buscarOrden}
@@ -239,11 +217,8 @@ export default function App() {
                   {loading ? "Buscando..." : "Buscar Orden"}
                 </button>
               </div>
-
               {msg && <p className="msg">{msg}</p>}
             </section>
-
-            {/* DETALLE DE ORDEN */}
             {order && (
               <>
                 <section className="card">
@@ -253,7 +228,6 @@ export default function App() {
                       Detalle de la Orden
                     </div>
                   </div>
-
                   <div className="info-grid">
                     <div>
                       <span className="info-label">ID Externa</span>
@@ -299,8 +273,6 @@ export default function App() {
                     </div>
                   </div>
                 </section>
-
-                {/* ===== PRODUCTOS COMPRADOS ===== */}
                 <section className="card card-table">
                   <div className="card-section-header">
                     <div className="card-section-title">
@@ -308,7 +280,6 @@ export default function App() {
                       Productos del Pedido
                     </div>
                   </div>
-
                   {order.productos && order.productos.length > 0 ? (
                     <div className="table-wrapper">
                       <table className="tabla">
@@ -336,7 +307,6 @@ export default function App() {
                     <p className="msg">⚠️ Esta orden no tiene productos registrados.</p>
                   )}
                 </section>
-
                 <section className="card">
                   <div className="card-section-header">
                     <div className="card-section-title">
@@ -344,7 +314,6 @@ export default function App() {
                       Actualizar Estado
                     </div>
                   </div>
-
                   <div className="update-grid">
                     <div>
                       <label>Nuevo estado</label>
@@ -360,7 +329,6 @@ export default function App() {
                         ))}
                       </select>
                     </div>
-
                     <div>
                       <label>Nueva ubicación</label>
                       <input
@@ -370,15 +338,12 @@ export default function App() {
                       />
                     </div>
                   </div>
-
                   <button className="btn-success" onClick={actualizarEstado}>
                     Guardar cambios
                   </button>
                 </section>
               </>
             )}
-
-            {/* TABLA DE ÓRDENES (cuando no hay order seleccionada) */}
             {!order && ordenes.length > 0 && (
               <section className="card card-table">
                 <div className="card-section-header">
@@ -387,7 +352,6 @@ export default function App() {
                     Todas las Órdenes Pendientes
                   </div>
                 </div>
-
                 <div className="table-wrapper">
                   <table className="tabla">
                     <thead>
@@ -397,7 +361,6 @@ export default function App() {
                         <th>Servicio Origen</th>
                         <th>Estado</th>
                         <th>Ubicación</th>
-                        
                         <th>Actualización</th>
                       </tr>
                     </thead>
@@ -419,6 +382,7 @@ export default function App() {
                         >
                           <td>{o.id_orden_externa}</td>
                           <td>{o.codigo_seguimiento}</td>
+                          <td>{o.servicio_origen}</td>
                           <td>
                             <span className={getEstadoClass(o.estado_actual)}>
                               {formatEstado(o.estado_actual)}
@@ -426,7 +390,9 @@ export default function App() {
                           </td>
                           <td>{o.ubicacion_actual}</td>
                           <td>
-                            {new Date(o.fecha_actualizacion).toLocaleString()}
+                            {o.fecha_actualizacion
+                              ? new Date(o.fecha_actualizacion).toLocaleString()
+                              : "Sin actualización"}
                           </td>
                         </tr>
                       ))}
@@ -437,11 +403,7 @@ export default function App() {
             )}
           </>
         )}
-
-        {/* ===== CONTENIDO VANDENTIALS (ARCHIVO APARTE) ===== */}
         {vistaActual === "vandentials" && <VandentialsView ordenes={ordenes} />}
-
-        {/* ===== CONTENIDO CAFETERÍA (ARCHIVO APARTE) ===== */}
         {vistaActual === "cafeteria" && <CafeteriaView ordenes={ordenes} />}
       </div>
     </div>
