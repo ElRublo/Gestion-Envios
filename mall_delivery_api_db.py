@@ -285,7 +285,6 @@ async def actualizar_direccion_orden(
     if not order:
         raise HTTPException(status_code=404, detail="Orden no encontrada")
 
-    # 🔐 Regla de seguridad: no permitir cambios si ya fue entregada
     if order.estado_interno == "ENTREGADO":
         raise HTTPException(
             status_code=400,
