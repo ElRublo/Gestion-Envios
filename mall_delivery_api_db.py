@@ -115,6 +115,9 @@ class ActualizacionEstado(SQLModel):
     estado: str = Field(..., description="Nuevo estado de la orden.")
     ubicacion: str = Field(..., description="Nueva ubicación o detalle del estado.")
 
+class ActualizarDireccion(SQLModel):
+    nueva_direccion: str = Field(..., description="Nueva dirección del cliente")
+
 # Estados de envío predefinidos
 STATUS_MAP = {
     "RECIBIDA": "Solicitud Recibida",
@@ -269,6 +272,47 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
             print(f"ERROR: No se pudo conectar al Webhook {order.webhook_url}. Error: {e}")
 
     return crear_respuesta_estado_from_orden(order)
+
+@app.patch("/interna/ordenes/{tracking_code}/direccion", tags=["Interno / Operaciones"])
+async def actualizar_direccion_orden(
+    tracking_code: str,
+    data: ActualizarDireccion,
+    session: Session = Depends(get_session)
+):
+    statement = select(Orden).where(Orden.codigo_seguimiento == tracking_code)
+    order = session.exec(statement).first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Orden no encontrada")
+
+    # 🔐 Regla de seguridad: no permitir cambios si ya fue entregada
+    if order.estado_interno == "ENTREGADO":
+        raise HTTPException(
+            status_code=400,
+            detail="No se puede cambiar la dirección de una orden ya entregada"
+        )
+
+    # 1. Convertir JSON a diccionario
+    datos_cliente = json.loads(order.datos_cliente_json)
+
+    # 2. Actualizar la dirección
+    datos_cliente["direccion"] = data.nueva_direccion
+
+    # 3. Guardar de nuevo como JSON
+    order.datos_cliente_json = json.dumps(datos_cliente)
+    order.fecha_actualizacion = datetime.now()
+
+    # 4. Guardar cambios en BD
+    session.add(order)
+    session.commit()
+    session.refresh(order)
+
+    return {
+        "mensaje": "✅ Dirección actualizada correctamente",
+        "id_orden_externa": order.id_orden_externa,
+        "codigo_seguimiento": order.codigo_seguimiento,
+        "nueva_direccion": data.nueva_direccion
+    }
 
 @app.get("/interna/cierre-diario", tags=["Interno / Reporte"])
 async def obtener_cierre_diario(session: Session = Depends(get_session)):

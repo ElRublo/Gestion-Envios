@@ -15,6 +15,8 @@ export default function App() {
   const [msg, setMsg] = useState("");
   const [ordenes, setOrdenes] = useState([]);
   const [vistaActual, setVistaActual] = useState("core");
+  const [nuevaDireccion, setNuevaDireccion] = useState("");
+  const [loadingDireccion, setLoadingDireccion] = useState(false);
 
   const estadosDisponibles = [
     "RECIBIDA",
@@ -82,6 +84,38 @@ export default function App() {
       setMsg("❌ Error al actualizar estado.");
     }
   };
+
+  const actualizarDireccion = async () => {
+    if (!nuevaDireccion) {
+      setMsg("⚠️ La nueva dirección es obligatoria.");
+      return;
+    }
+
+    try {
+      setLoadingDireccion(true);
+
+      const res = await axios.patch(
+        `${API_URL}/interna/ordenes/${trackingCode}/direccion`,
+        {
+          nueva_direccion: nuevaDireccion,
+        }
+      );
+
+      const ordenActualizada = await axios.get(
+        `${API_URL}/interna/ordenes-completa/${trackingCode}`
+      );
+
+      setOrder(ordenActualizada.data);
+      setNuevaDireccion("");
+      setMsg("✅ Dirección actualizada correctamente.");
+    } catch (err) {
+      console.error(err);
+      setMsg("❌ Error al actualizar dirección.");
+    } finally {
+      setLoadingDireccion(false);
+    }
+  };
+
 
   const cargarOrdenes = async () => {
     try {
@@ -340,6 +374,31 @@ export default function App() {
                   </div>
                   <button className="btn-success" onClick={actualizarEstado}>
                     Guardar cambios
+                  </button>
+                </section>
+                <section className="card">
+                  <div className="card-section-header">
+                    <div className="card-section-title">
+                      <span className="card-section-icon">🏠</span>
+                      Actualizar Dirección
+                    </div>
+                  </div>
+                  <div className="update-grid">
+                    <div>
+                      <label>Nueva dirección</label>
+                      <input
+                        value={nuevaDireccion}
+                        onChange={(e) => setNuevaDireccion(e.target.value)}
+                        placeholder="Ej: Calle Reforma 123, Hermosillo"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    className="btn-primary"
+                    onClick={actualizarDireccion}
+                    disabled={loadingDireccion}
+                  >
+                    {loadingDireccion ? "Actualizando..." : "Guardar nueva dirección"}
                   </button>
                 </section>
               </>
