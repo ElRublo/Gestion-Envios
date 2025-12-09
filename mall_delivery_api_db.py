@@ -217,7 +217,7 @@ async def obtener_estado_orden(tracking_code: str, session: Session = Depends(ge
 
     return crear_respuesta_estado_from_orden(order)
 
-@app.patch("/interna/ordenes/{tracking_code}/estado", response_model=OrdenCompleta, tags=["Interno / Operaciones"])
+@app.patch("/interna/ordenes/{tracking_code}/estado", response_model=EstadoEnvio, tags=["Interno / Operaciones"])
 async def actualizar_estado_orden(tracking_code: str, actualizacion: ActualizacionEstado, session: Session = Depends(get_session)):
     statement = select(Orden).where(Orden.codigo_seguimiento == tracking_code)
     order = session.exec(statement).first()
@@ -233,7 +233,6 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
             detail=f"Estado inválido. Estados permitidos: {', '.join(STATUS_MAP.keys())}"
         )
 
-    # Actualizar
     order.estado_interno = new_status_key
     order.estado_actual = STATUS_MAP[new_status_key]
     order.ubicacion_actual = actualizacion.ubicacion
@@ -246,17 +245,7 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
     session.commit()
     session.refresh(order)
 
-    # 🔥 DEVOLVER ORDEN COMPLETA
-    return {
-        "id_orden_externa": order.id_orden_externa,
-        "codigo_seguimiento": order.codigo_seguimiento,
-        "estado_actual": order.estado_actual,
-        "ubicacion_actual": order.ubicacion_actual,
-        "fecha_actualizacion": order.fecha_actualizacion,
-        "servicio_origen": order.servicio_origen,
-        "cliente": json.loads(order.datos_cliente_json),
-        "productos": json.loads(order.productos_json),
-    }
+    return crear_respuesta_estado_from_orden(order)
 
 @app.patch("/interna/ordenes/{tracking_code}/direccion", tags=["Interno / Operaciones"])
 async def actualizar_direccion_orden(
