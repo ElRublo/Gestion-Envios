@@ -217,13 +217,18 @@ async def obtener_estado_orden(tracking_code: str, session: Session = Depends(ge
 
     return crear_respuesta_estado_from_orden(order)
 
-@app.patch("/interna/ordenes/{tracking_code}/estado", response_model=EstadoEnvio, tags=["Interno / Operaciones"])
+@app.patch("/interna/ordenes/{tracking_code}/estado", tags=["Interno / Operaciones"])
 async def actualizar_estado_orden(tracking_code: str, actualizacion: ActualizacionEstado, session: Session = Depends(get_session)):
+    """Actualiza el estado de una orden y devuelve la orden completa."""
+
     statement = select(Orden).where(Orden.codigo_seguimiento == tracking_code)
     order = session.exec(statement).first()
 
     if not order:
-        raise HTTPException(status_code=404, detail="Código de seguimiento no encontrado.")
+        raise HTTPException(
+            status_code=404,
+            detail="Código de seguimiento no encontrado."
+        )
 
     new_status_key = actualizacion.estado.upper().replace(" ", "_")
 
@@ -233,6 +238,7 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
             detail=f"Estado inválido. Estados permitidos: {', '.join(STATUS_MAP.keys())}"
         )
 
+    # Actualizar
     order.estado_interno = new_status_key
     order.estado_actual = STATUS_MAP[new_status_key]
     order.ubicacion_actual = actualizacion.ubicacion
@@ -245,7 +251,31 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
     session.commit()
     session.refresh(order)
 
-    return crear_respuesta_estado_from_orden(order)
+    # Webhook si existe
+    if order.webhook_url:
+        payload = {
+            "codigo_seguimiento": order.codigo_seguimiento,
+            "id_orden_externa": order.id_orden_externa,
+            "estado_actual": order.estado_actual,
+            "ubicacion_actual": order.ubicacion_actual,
+            "fecha_actualizacion": order.fecha_actualizacion.isoformat(),
+        }
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                await client.post(order.webhook_url, json=payload)
+        except Exception as e:
+            print(f"Webhook error: {e}")
+
+    # 🔥 Devolver la ORDEN COMPLETA como espera el frontend
+    return {
+        "id_orden_externa": order.id_orden_externa,
+        "codigo_seguimiento": order.codigo_seguimiento,
+        "cliente": order.datos_cliente_json,
+        "productos": order.productos_json,
+        "estado_actual": order.estado_actual,
+        "ubicacion_actual": order.ubicacion_actual,
+        "fecha_actualizacion": order.fecha_actualizacion,
+    }
 
 @app.patch("/interna/ordenes/{tracking_code}/direccion", tags=["Interno / Operaciones"])
 async def actualizar_direccion_orden(
