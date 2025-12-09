@@ -270,8 +270,8 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
     return {
         "id_orden_externa": order.id_orden_externa,
         "codigo_seguimiento": order.codigo_seguimiento,
-        "cliente": order.datos_cliente_json,
-        "productos": order.productos_json,
+        "cliente": json.loads(order.datos_cliente_json),
+        "productos": json.loads(order.productos_json),
         "estado_actual": order.estado_actual,
         "ubicacion_actual": order.ubicacion_actual,
         "fecha_actualizacion": order.fecha_actualizacion,
