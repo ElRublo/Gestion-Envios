@@ -217,18 +217,13 @@ async def obtener_estado_orden(tracking_code: str, session: Session = Depends(ge
 
     return crear_respuesta_estado_from_orden(order)
 
-@app.patch("/interna/ordenes/{tracking_code}/estado", response_model=EstadoEnvio, tags=["Interno / Operaciones"])
+@app.patch("/interna/ordenes/{tracking_code}/estado", response_model=OrdenCompleta, tags=["Interno / Operaciones"])
 async def actualizar_estado_orden(tracking_code: str, actualizacion: ActualizacionEstado, session: Session = Depends(get_session)):
-    """Endpoint interno para actualizar el estado de una orden."""
-    
     statement = select(Orden).where(Orden.codigo_seguimiento == tracking_code)
     order = session.exec(statement).first()
-    
+
     if not order:
-        raise HTTPException(
-            status_code=404, 
-            detail="Código de seguimiento no encontrado."
-        )
+        raise HTTPException(status_code=404, detail="Código de seguimiento no encontrado.")
 
     new_status_key = actualizacion.estado.upper().replace(" ", "_")
 
@@ -237,41 +232,31 @@ async def actualizar_estado_orden(tracking_code: str, actualizacion: Actualizaci
             status_code=400,
             detail=f"Estado inválido. Estados permitidos: {', '.join(STATUS_MAP.keys())}"
         )
-    
-    # 1. Actualizar campos
+
+    # Actualizar
     order.estado_interno = new_status_key
     order.estado_actual = STATUS_MAP[new_status_key]
     order.ubicacion_actual = actualizacion.ubicacion
     order.fecha_actualizacion = datetime.now()
 
-    # 2. Marcar para cierre si es Entregado
     if new_status_key == "ENTREGADO":
         order.cierre_diario = True
-    
-    # 3. Guardar cambios
+
     session.add(order)
     session.commit()
     session.refresh(order)
 
-    # 4. Notificar vía webhook si está configurado
-    if order.webhook_url:
-        notification_payload = {
-            "codigo_seguimiento": order.codigo_seguimiento,
-            "id_orden_externa": order.id_orden_externa,
-            "estado_actual": order.estado_actual,
-            "ubicacion_actual": order.ubicacion_actual,
-            "fecha_actualizacion": order.fecha_actualizacion.isoformat(),
-        }
-        try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                response = await client.post(order.webhook_url, json=notification_payload)
-                # Opcional: Registrar si la notificación falló.
-                if response.status_code >= 400:
-                    print(f"ERROR: Webhook a {order.webhook_url} falló con estado {response.status_code}")
-        except httpx.RequestError as e:
-            print(f"ERROR: No se pudo conectar al Webhook {order.webhook_url}. Error: {e}")
-
-    return crear_respuesta_estado_from_orden(order)
+    # 🔥 DEVOLVER ORDEN COMPLETA
+    return {
+        "id_orden_externa": order.id_orden_externa,
+        "codigo_seguimiento": order.codigo_seguimiento,
+        "estado_actual": order.estado_actual,
+        "ubicacion_actual": order.ubicacion_actual,
+        "fecha_actualizacion": order.fecha_actualizacion,
+        "servicio_origen": order.servicio_origen,
+        "cliente": json.loads(order.datos_cliente_json),
+        "productos": json.loads(order.productos_json),
+    }
 
 @app.patch("/interna/ordenes/{tracking_code}/direccion", tags=["Interno / Operaciones"])
 async def actualizar_direccion_orden(

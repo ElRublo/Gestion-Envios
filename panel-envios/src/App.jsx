@@ -130,6 +130,13 @@ export default function App() {
     cargarOrdenes();
   }, []);
 
+  useEffect(() => {
+    if (order) {
+      console.log("Productos recibidos:", order.productos);
+    }
+  }, [order]);  
+
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
